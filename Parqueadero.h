@@ -5,7 +5,7 @@
 
 class ParqueaderoLogica {
 private:
-    std::string celdas[41]; // Las 40 celdas del parqueadero
+    std::string celdas[41]; // 40 celdas
 
 public:
     ParqueaderoLogica() {
