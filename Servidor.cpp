@@ -1,11 +1,11 @@
 #include <iostream>
 #include <string>
-#include <map>
+#include <fstream>
+#include <sstream>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 
 #pragma comment(lib, "ws2_32.lib")
-
 #define PORT 8080
 
 struct VehiculoPacket {
@@ -15,87 +15,87 @@ struct VehiculoPacket {
     int esSalida;
 };
 
+// Función para guardar el estado actual en el disco
+void guardarEstadoDisco(const std::string celdas[]) {
+    std::ofstream archivo("estado.txt");
+    for (int i = 1; i <= 40; i++) {
+        archivo << i << ":" << celdas[i] << "\n";
+    }
+    archivo.close();
+}
+
+// Función para CARGAR el estado previo si ya existe un estado.txt
+void cargarEstadoDisco(std::string celdas[]) {
+    std::ifstream archivo("estado.txt");
+    if (!archivo.is_open()) {
+        // Si no existe, todas inician en LIBRE
+        for (int i = 1; i <= 40; i++) celdas[i] = "LIBRE";
+        guardarEstadoDisco(celdas);
+        return;
+    }
+
+    std::string linea;
+    while (std::getline(archivo, linea)) {
+        size_t separador = linea.find(":");
+        if (separador != std::string::npos) {
+            int num = std::stoi(linea.substr(0, separador));
+            std::string estado = linea.substr(separador + 1);
+            if (num >= 1 && num <= 40) {
+                celdas[num] = estado;
+            }
+        }
+    }
+    archivo.close();
+}
+
 int main() {
     WSADATA wsaData;
     SOCKET servidor_fd, nuevo_socket;
     struct sockaddr_in direccion;
     int addrlen = sizeof(direccion);
 
-    // Mapa para llevar el control: qué placa está ocupando qué celda
-    // Si la celda está libre vale "", si está ocupada guarda la placa.
-    std::string celdas[41]; 
-    for(int i = 0; i <= 40; i++) celdas[i] = "LIBRE";
+    std::string celdas[41];
+    
+    // CARGAR ESTADO PREVIO (mantiene las placas aunque apagues todo)
+    cargarEstadoDisco(celdas);
 
-    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "[SERVIDOR] Error al inicializar Winsock.\n";
-        return 1;
-    }
-
+    WSAStartup(MAKEWORD(2, 2), &wsaData);
     servidor_fd = socket(AF_INET, SOCK_STREAM, 0);
-    if (servidor_fd == INVALID_SOCKET) {
-        std::cerr << "[SERVIDOR] Error al crear el socket.\n";
-        WSACleanup();
-        return 1;
-    }
-
+    
     direccion.sin_family = AF_INET;
     direccion.sin_addr.s_addr = INADDR_ANY;
     direccion.sin_port = htons(PORT);
 
-    if (bind(servidor_fd, (struct sockaddr*)&direccion, sizeof(direccion)) == SOCKET_ERROR) {
-        std::cerr << "[SERVIDOR] Error en bind.\n";
-        closesocket(servidor_fd);
-        WSACleanup();
-        return 1;
-    }
+    bind(servidor_fd, (struct sockaddr*)&direccion, sizeof(direccion));
+    listen(servidor_fd, 3);
 
-    if (listen(servidor_fd, 3) == SOCKET_ERROR) {
-        std::cerr << "[SERVIDOR] Error en listen.\n";
-        closesocket(servidor_fd);
-        WSACleanup();
-        return 1;
-    }
-
-    std::cout << "[SERVIDOR] Esperando conexión del cliente...\n";
-    nuevo_socket = accept(servidor_fd, (struct sockaddr*)&direccion, &addrlen);
-    if (nuevo_socket == INVALID_SOCKET) {
-        std::cerr << "[SERVIDOR] Error en accept.\n";
-        closesocket(servidor_fd);
-        WSACleanup();
-        return 1;
-    }
-
-    std::cout << "[SERVIDOR] ¡Conectado! Administrando las 40 celdas del parqueadero...\n\n";
+    std::cout << "[SERVIDOR] Guardado previo cargado. Esperando conexiones...\n";
 
     while (true) {
-        VehiculoPacket paqueteRecibido;
-        int valread = recv(nuevo_socket, reinterpret_cast<char*>(&paqueteRecibido), sizeof(VehiculoPacket), 0);
+        nuevo_socket = accept(servidor_fd, (struct sockaddr*)&direccion, &addrlen);
+        if (nuevo_socket == INVALID_SOCKET) continue;
         
-        if (valread > 0) {
-            int c = paqueteRecibido.celda;
-            std::string placaActual(paqueteRecibido.placa);
+        std::cout << "[SERVIDOR] ¡Cliente conectado!\n";
 
-            // Verificamos si la celda ya estaba ocupada o si simulamos entrada/salida
-            std::cout << "[ESTADO PARQUEADERO] Recibido carro con Placa: " << placaActual 
-                      << " | Celda asignada: " << c << std::endl;
+        VehiculoPacket paquete;
+        while (recv(nuevo_socket, reinterpret_cast<char*>(&paquete), sizeof(VehiculoPacket), 0) > 0) {
+            int c = paquete.celda;
+            std::string placa(paquete.placa);
+            std::string horaIngreso(paquete.hora);
 
             if (c >= 1 && c <= 40) {
-                if (celdas[c] == "LIBRE") {
-                    celdas[c] = placaActual;
-                    std::cout << " -> [ENTRADA] La celda " << c << " ahora esta OCUPADA por " << placaActual << "\n";
-                } else {
-                    std::cout << " -> [SALIDA] La celda " << c << " ha quedado LIBRE (Vehiculo salio).\n";
+                if (paquete.esSalida == 1) {
                     celdas[c] = "LIBRE";
+                } else {
+                    if (horaIngreso.empty()) horaIngreso = "14:35:10";
+                    celdas[c] = placa + "|" + horaIngreso;
                 }
+                guardarEstadoDisco(celdas);
             }
-            std::cout << "--------------------------------------------------\n";
-        } else {
-            std::cout << "[SERVIDOR] Cliente desconectado.\n";
-            break;
         }
+        closesocket(nuevo_socket);
     }
 
-    closesocket(nuevo_socket);
     closesocket(servidor_fd);
     WSACleanup();
     return 0;

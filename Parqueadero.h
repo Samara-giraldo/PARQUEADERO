@@ -1,30 +1,35 @@
-#ifndef PARQUEADERO_H
-#define PARQUEADERO_H
+#ifndef PARQUEADEROLOGICA_H
+#define PARQUEADEROLOGICA_H
 
 #include <string>
+#include <fstream>
+#include <sstream>
 
 class ParqueaderoLogica {
 private:
-    std::string celdas[41]; // 40 celdas
-
+    std::string ultimaRespuesta; // Variable miembro para mantener la memoria viva en C++
 public:
-    ParqueaderoLogica() {
-        for(int i = 1; i <= 40; i++) {
-            celdas[i] = "LIBRE";
+    const char* obtenerEstadoCelda(int celda) {
+        std::ifstream archivo("estado.txt");
+        if (!archivo.is_open()) {
+            ultimaRespuesta = "LIBRE";
+            return ultimaRespuesta.c_str();
         }
-    }
 
-    void actualizarCelda(int celda, std::string placa) {
-        if(celda >= 1 && celda <= 40) {
-            celdas[celda] = placa;
+        std::string linea;
+        while (std::getline(archivo, linea)) {
+            size_t separador = linea.find(":");
+            if (separador != std::string::npos) {
+                int num = std::stoi(linea.substr(0, separador));
+                std::string estado = linea.substr(separador + 1);
+                if (num == celda) {
+                    ultimaRespuesta = estado;
+                    return ultimaRespuesta.c_str();
+                }
+            }
         }
-    }
-
-    std::string obtenerEstadoCelda(int celda) {
-        if(celda >= 1 && celda <= 40) {
-            return celdas[celda];
-        }
-        return "INVALIDA";
+        ultimaRespuesta = "LIBRE";
+        return ultimaRespuesta.c_str();
     }
 };
 
