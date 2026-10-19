@@ -79,7 +79,7 @@ El sistema está compuesto por tres elementos principales: el cliente de consola
 
 ```mermaid
 flowchart TD
-    A["Cliente de consola<br/>Cliente.cpp"] -->|"Solicitud TCP/IP<br/>Puerto 8080"| B["Servidor<br/>Servidor.cpp"]
+    A["Cliente de consola<br/>Cliente.cpp"] -->|"Solicitud TCP/IP<br/>"| B["Servidor<br/>Servidor.cpp"]
     B --> C["Lógica del parqueadero<br/>Parqueadero.h"]
     C --> D[("estado.txt<br/>Persistencia")]
     D -->|"Recuperación al iniciar"| C
