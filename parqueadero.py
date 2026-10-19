@@ -52,14 +52,11 @@ class ParqueaderoLogica(object):
     thisown = property(lambda x: x.this.own(), lambda x, v: x.this.own(v), doc="The membership flag")
     __repr__ = _swig_repr
 
-    def __init__(self):
-        _parqueadero.ParqueaderoLogica_swiginit(self, _parqueadero.new_ParqueaderoLogica())
-
-    def actualizarCelda(self, celda, placa):
-        return _parqueadero.ParqueaderoLogica_actualizarCelda(self, celda, placa)
-
     def obtenerEstadoCelda(self, celda):
         return _parqueadero.ParqueaderoLogica_obtenerEstadoCelda(self, celda)
+
+    def __init__(self):
+        _parqueadero.ParqueaderoLogica_swiginit(self, _parqueadero.new_ParqueaderoLogica())
     __swig_destroy__ = _parqueadero.delete_ParqueaderoLogica
 
 # Register ParqueaderoLogica in _parqueadero:

@@ -3210,9 +3210,8 @@ SWIG_Python_NonDynamicSetAttr(PyObject *obj, PyObject *name, PyObject *value) {
 
 #define SWIGTYPE_p_ParqueaderoLogica swig_types[0]
 #define SWIGTYPE_p_char swig_types[1]
-#define SWIGTYPE_p_std__string swig_types[2]
-static swig_type_info *swig_types[4];
-static swig_module_info swig_module = {swig_types, 3, 0, 0, 0, 0};
+static swig_type_info *swig_types[3];
+static swig_module_info swig_module = {swig_types, 2, 0, 0, 0, 0};
 #define SWIG_TypeQuery(name) SWIG_TypeQueryModule(&swig_module, &swig_module, name)
 #define SWIG_MangledTypeQuery(name) SWIG_MangledTypeQueryModule(&swig_module, &swig_module, name)
 
@@ -3361,6 +3360,9 @@ namespace swig {
 
 
 #include "Parqueadero.h"
+
+
+#include <string>
 
 
 #include <limits.h>
@@ -3512,69 +3514,51 @@ SWIG_AsVal_int (PyObject * obj, int *val)
   return res;
 }
 
+
+SWIGINTERN swig_type_info*
+SWIG_pchar_descriptor(void)
+{
+  static swig_type_info* info = 0;
+  if (!info) {
+    info = SWIG_TypeQuery("_p_char");
+  }
+  return info;
+}
+
+
+#define SWIG_FromCharPtrAndSize(carray, size) SWIG_FromBinaryCharPtrAndSize(carray, size, 0)
+SWIGINTERNINLINE PyObject *
+SWIG_FromBinaryCharPtrAndSize(const char* carray, size_t size, int flags)
+{
+  if (carray) {
+    if (size > (size_t)PY_SSIZE_T_MAX) {
+      swig_type_info* pchar_descriptor = SWIG_pchar_descriptor();
+      return pchar_descriptor ? 
+	SWIG_InternalNewPointerObj(const_cast< char * >(carray), pchar_descriptor, 0) : SWIG_Py_Void();
+    } else {
+#if defined(SWIG_PYTHON_STRICT_BYTE_CHAR)
+      return PyBytes_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+#else
+      if (SWIG_IsBinaryStr(flags))
+        return PyBytes_FromStringAndSize(carray, static_cast< Py_ssize_t >(size));
+      return PyUnicode_DecodeUTF8(carray, static_cast< Py_ssize_t >(size), "surrogateescape");
+#endif
+    }
+  } else {
+    return SWIG_Py_Void();
+  }
+}
+
+
+SWIGINTERNINLINE PyObject * 
+SWIG_FromCharPtr(const char *cptr)
+{ 
+  return SWIG_FromCharPtrAndSize(cptr, (cptr ? strlen(cptr) : 0));
+}
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-SWIGINTERN PyObject *_wrap_new_ParqueaderoLogica(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  ParqueaderoLogica *result = 0 ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "new_ParqueaderoLogica", 0, 0, 0)) SWIG_fail;
-  result = (ParqueaderoLogica *)new ParqueaderoLogica();
-  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ParqueaderoLogica, SWIG_POINTER_NEW |  0 );
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
-SWIGINTERN PyObject *_wrap_ParqueaderoLogica_actualizarCelda(PyObject *self, PyObject *args) {
-  PyObject *resultobj = 0;
-  ParqueaderoLogica *arg1 = 0 ;
-  int arg2 ;
-  std::string arg3 ;
-  void *argp1 = 0 ;
-  int res1 = 0 ;
-  int val2 ;
-  int ecode2 = 0 ;
-  void *argp3 = 0 ;
-  int res3 = 0 ;
-  PyObject *swig_obj[3] ;
-  
-  (void)self;
-  if (!SWIG_Python_UnpackTuple(args, "ParqueaderoLogica_actualizarCelda", 3, 3, swig_obj)) SWIG_fail;
-  res1 = SWIG_ConvertPtr(swig_obj[0], &argp1,SWIGTYPE_p_ParqueaderoLogica, 0 |  0 );
-  if (!SWIG_IsOK(res1)) {
-    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "ParqueaderoLogica_actualizarCelda" "', argument " "1"" of type '" "ParqueaderoLogica *""'"); 
-  }
-  arg1 = reinterpret_cast< ParqueaderoLogica * >(argp1);
-  ecode2 = SWIG_AsVal_int(swig_obj[1], &val2);
-  if (!SWIG_IsOK(ecode2)) {
-    SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ParqueaderoLogica_actualizarCelda" "', argument " "2"" of type '" "int""'");
-  } 
-  arg2 = static_cast< int >(val2);
-  {
-    res3 = SWIG_ConvertPtr(swig_obj[2], &argp3, SWIGTYPE_p_std__string,  0  | 0);
-    if (!SWIG_IsOK(res3)) {
-      SWIG_exception_fail(SWIG_ArgError(res3), "in method '" "ParqueaderoLogica_actualizarCelda" "', argument " "3"" of type '" "std::string""'"); 
-    }  
-    if (!argp3) {
-      SWIG_exception_fail(SWIG_NullReferenceError, "invalid null reference " "in method '" "ParqueaderoLogica_actualizarCelda" "', argument " "3"" of type '" "std::string""'");
-    } else {
-      std::string * temp = reinterpret_cast< std::string * >(argp3);
-      arg3 = *temp;
-      if (SWIG_IsNewObj(res3)) delete temp;
-    }
-  }
-  (arg1)->actualizarCelda(arg2,SWIG_STD_MOVE(*(&arg3)));
-  resultobj = SWIG_Py_Void();
-  return resultobj;
-fail:
-  return NULL;
-}
-
-
 SWIGINTERN PyObject *_wrap_ParqueaderoLogica_obtenerEstadoCelda(PyObject *self, PyObject *args) {
   PyObject *resultobj = 0;
   ParqueaderoLogica *arg1 = 0 ;
@@ -3584,7 +3568,7 @@ SWIGINTERN PyObject *_wrap_ParqueaderoLogica_obtenerEstadoCelda(PyObject *self, 
   int val2 ;
   int ecode2 = 0 ;
   PyObject *swig_obj[2] ;
-  std::string result;
+  char *result = 0 ;
   
   (void)self;
   if (!SWIG_Python_UnpackTuple(args, "ParqueaderoLogica_obtenerEstadoCelda", 2, 2, swig_obj)) SWIG_fail;
@@ -3598,8 +3582,22 @@ SWIGINTERN PyObject *_wrap_ParqueaderoLogica_obtenerEstadoCelda(PyObject *self, 
     SWIG_exception_fail(SWIG_ArgError(ecode2), "in method '" "ParqueaderoLogica_obtenerEstadoCelda" "', argument " "2"" of type '" "int""'");
   } 
   arg2 = static_cast< int >(val2);
-  result = (arg1)->obtenerEstadoCelda(arg2);
-  resultobj = SWIG_NewPointerObj((new std::string(result)), SWIGTYPE_p_std__string, SWIG_POINTER_OWN |  0 );
+  result = (char *)(arg1)->obtenerEstadoCelda(arg2);
+  resultobj = SWIG_FromCharPtr((const char *)result);
+  return resultobj;
+fail:
+  return NULL;
+}
+
+
+SWIGINTERN PyObject *_wrap_new_ParqueaderoLogica(PyObject *self, PyObject *args) {
+  PyObject *resultobj = 0;
+  ParqueaderoLogica *result = 0 ;
+  
+  (void)self;
+  if (!SWIG_Python_UnpackTuple(args, "new_ParqueaderoLogica", 0, 0, 0)) SWIG_fail;
+  result = (ParqueaderoLogica *)new ParqueaderoLogica();
+  resultobj = SWIG_NewPointerObj(SWIG_as_voidptr(result), SWIGTYPE_p_ParqueaderoLogica, SWIG_POINTER_NEW |  0 );
   return resultobj;
 fail:
   return NULL;
@@ -3641,9 +3639,8 @@ SWIGINTERN PyObject *ParqueaderoLogica_swiginit(PyObject *SWIGUNUSEDPARM(self), 
 }
 
 static PyMethodDef SwigMethods[] = {
-	 { "new_ParqueaderoLogica", _wrap_new_ParqueaderoLogica, METH_NOARGS, NULL},
-	 { "ParqueaderoLogica_actualizarCelda", _wrap_ParqueaderoLogica_actualizarCelda, METH_VARARGS, NULL},
 	 { "ParqueaderoLogica_obtenerEstadoCelda", _wrap_ParqueaderoLogica_obtenerEstadoCelda, METH_VARARGS, NULL},
+	 { "new_ParqueaderoLogica", _wrap_new_ParqueaderoLogica, METH_NOARGS, NULL},
 	 { "delete_ParqueaderoLogica", _wrap_delete_ParqueaderoLogica, METH_O, NULL},
 	 { "ParqueaderoLogica_swigregister", ParqueaderoLogica_swigregister, METH_O, NULL},
 	 { "ParqueaderoLogica_swiginit", ParqueaderoLogica_swiginit, METH_VARARGS, NULL},
@@ -3655,22 +3652,18 @@ static PyMethodDef SwigMethods[] = {
 
 static swig_type_info _swigt__p_ParqueaderoLogica = {"_p_ParqueaderoLogica", "ParqueaderoLogica *", 0, 0, (void*)0, 0};
 static swig_type_info _swigt__p_char = {"_p_char", "char *", 0, 0, (void*)0, 0};
-static swig_type_info _swigt__p_std__string = {"_p_std__string", "std::string *", 0, 0, (void*)0, 0};
 
 static swig_type_info *swig_type_initial[] = {
   &_swigt__p_ParqueaderoLogica,
   &_swigt__p_char,
-  &_swigt__p_std__string,
 };
 
 static swig_cast_info _swigc__p_ParqueaderoLogica[] = {  {&_swigt__p_ParqueaderoLogica, 0, 0, 0},{0, 0, 0, 0}};
 static swig_cast_info _swigc__p_char[] = {  {&_swigt__p_char, 0, 0, 0},{0, 0, 0, 0}};
-static swig_cast_info _swigc__p_std__string[] = {  {&_swigt__p_std__string, 0, 0, 0},{0, 0, 0, 0}};
 
 static swig_cast_info *swig_cast_initial[] = {
   _swigc__p_ParqueaderoLogica,
   _swigc__p_char,
-  _swigc__p_std__string,
 };
 
 
