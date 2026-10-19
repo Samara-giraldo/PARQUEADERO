@@ -3,5 +3,7 @@ __pycache__/
 *.pyd
 *.pyc
 *.exe
+*.dll
 parqueadero_wrap.cxx
+parqueadero.py
 estado.txt
