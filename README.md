@@ -277,7 +277,8 @@ Sus funciones principales son:
 
 El archivo se sobrescribe cuando se actualiza el estado, de acuerdo con el comportamiento descrito para el sistema.
 
-
+## Diagrama uml
+<img width="1448" height="1086" alt="image" src="https://github.com/user-attachments/assets/6eb26243-0ea2-44fa-a633-5ab4f1b37334" />
 
 
 
