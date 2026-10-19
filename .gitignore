@@ -1,0 +1,7 @@
+build/
+__pycache__/
+*.pyd
+*.pyc
+*.exe
+parqueadero_wrap.cxx
+estado.txt
