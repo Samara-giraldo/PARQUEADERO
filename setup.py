@@ -7,7 +7,7 @@ os.environ["CXX"] = "g++"
 parqueadero_extension = Extension(
     '_parqueadero',
     sources=['parqueadero_wrap.cxx'],  # <-- Solo dejamos el wrapper generado por SWIG
-    include_dirs=['.'],
+    include_dirs=['.', 'src'],
     extra_compile_args=['-std=c++11'],
 )
 
