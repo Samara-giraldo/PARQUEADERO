@@ -15,7 +15,7 @@ root.configure(bg="#f4f6f7") # Fondo suave / claro pastel
 
 celdas_widgets = {}
 
-# Título estilizado
+# Título principal de la interfaz gráfica del parqueadero
 lbl_titulo = tk.Label(
     root, 
     text="PARQUEADERO", 
